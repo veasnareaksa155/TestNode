@@ -13,7 +13,7 @@ app.use("/users", userRoutes);
 
 app.use('/products',productRoutes);
 
-app.use('/uploads', express.static('uploads'));
+
 // start server
 
 app.listen(3000, () => {
