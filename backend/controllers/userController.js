@@ -1,50 +1,30 @@
-let users = [
-  { id: 1, name: "Reaksa" }
-];
+const User = require("../models/User");
 
-// GET /users
-exports.getUsers = (req, res) => {
+// CREATE
+exports.registerUser = async (req, res) => {
+  try {
+    const user = await User.create(req.body);
+    res.json(user);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+// READ
+exports.getUsers = async (req, res) => {
+  const users = await User.find();
   res.json(users);
 };
 
-// POST /users
-exports.createUser = (req, res) => {
-  const newUser = {
-    id: users.length + 1,
-    name: req.body.name
-  };
+// LOGIN
+exports.loginUser = async (req, res) => {
+  const { email, password } = req.body;
 
-  users.push(newUser);
-  res.json(newUser);
+  const user = await User.findOne({ email, password });
+
+  if (!user) {
+    return res.status(401).json({ message: "Invalid login" });
+  }
+
+  res.json({ message: "Login success", user });
 };
-
-//put /user
-exports.updateUser = (req , res)=>{
-  const userId = parseInt(req.params.id);
-  const UserIndes = user.findIndex(u => u.id === userId);
-  if(userIndex === -1){
-    return res.status(404).json({message:"User not found"});
-  }
-  const updateUser = {
-    userId,
-    name:req.body.name || users[userIndex].name
-  }
-  users[userIndex] = updateUser;
-  res.status(200).json(updateUser);
-}
-
-//Delete user
-
-exports.deleteUser = (req , res)=>{
-  const userId = parseInt(req.params.id);
-  const userIndex = users.findIndex(u => u.id === userId);
-  if(userIndex === -1){
-    return res.status(404).json({
-      message:"User not found"
-    })
-  }
-  users.splice(userIndex,1);
-  res.status(200).json({
-    message:"User deleted"
-  });
-}
